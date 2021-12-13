@@ -1,4 +1,4 @@
-﻿namespace NARFUClassLib
+﻿namespace NARFUClassLib.Objects
 {
     public class Lecture
     {

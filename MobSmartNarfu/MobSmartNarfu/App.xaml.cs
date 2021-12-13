@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace MobileSmartNarfu
+namespace MobSmartNarfu
 {
     public partial class App : Application
     {

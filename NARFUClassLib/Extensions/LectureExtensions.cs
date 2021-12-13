@@ -1,14 +1,16 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using NARFUClassLib.Objects;
+using NARFUClassLib.Tools;
 using System.Text.RegularExpressions;
 
-namespace NARFUClassLib
+namespace NARFUClassLib.Extensions
 {
     public static class LectureExtensions
     {
         public static List<Lecture> lectures = new();
 
-        private static List<Lecture> GetParsedList(string page)
+        private static List<Lecture> GetParsedList(string? page, string? week)
         {
             if (page != null)
             {
@@ -16,7 +18,7 @@ namespace NARFUClassLib
                 HtmlParser parser = new();
                 IDocument doc = parser.ParseDocument(page);
 
-                foreach (var headEl in doc.GetElementById("week_1").QuerySelectorAll(".list"))
+                foreach (var headEl in doc.GetElementById($"week_{week}").QuerySelectorAll(".list"))
                 {
                     string dayOfWeek = new Regex(@"\s+").Replace(headEl.QuerySelector(".dayofweek").TextContent.Trim(), " ");
                     foreach (var time_table_sheet in headEl.QuerySelectorAll(".timetable_sheet"))
@@ -25,7 +27,7 @@ namespace NARFUClassLib
                         if (span_list.Length >= 5)
                         {
                             span_list = span_list.Where(item => item.ClassName != null).ToCollection();
-                            Dictionary<string, string> span_dict = new();
+                            Dictionary<string, string> span_dict = new Dictionary<string, string>();
                             foreach (var item in span_list)
                             {
                                 string key = item.ClassName;
@@ -52,10 +54,10 @@ namespace NARFUClassLib
                 return null;
         }
 
-        public static List<Lecture> GetLecturesList(Uri url)
+        public static List<Lecture> GetLecturesList(Uri url, string? week)
         {
             string page = WebTools.GetHtmlPage(url);
-            return GetParsedList(page);
+            return GetParsedList(page, week);
         }
 
         public static IEnumerable<IGrouping<string?, Lecture>> GetGroupedLectureList(this List<Lecture> lectures)
@@ -63,7 +65,7 @@ namespace NARFUClassLib
             return lectures.OrderBy(x => DateTime.Parse(x.dayofweek)).GroupBy(x => x.dayofweek);
         }
 
-        public static string GetLecturesString(this IEnumerable<IGrouping<string, Lecture>> lecturesList)
+        public static string GetLecturesString(this IEnumerable<IGrouping<string?, Lecture>> lecturesList)
         {
             string result = string.Empty;
             foreach (IGrouping<string, Lecture> pair in lecturesList)

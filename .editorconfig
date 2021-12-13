@@ -2,3 +2,9 @@
 
 # CA1305: Укажите IFormatProvider
 dotnet_diagnostic.CA1305.severity = none
+
+# IDE0090: Используйте "new(...)".
+dotnet_diagnostic.IDE0090.severity = silent
+
+# CA2211: Поля, не являющиеся константами, не должны быть видимыми
+dotnet_diagnostic.CA2211.severity = none

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace NARFUClassLib
+namespace NARFUClassLib.Tools
 {
     public static class WebTools
     {
