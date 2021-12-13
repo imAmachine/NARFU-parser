@@ -24,8 +24,9 @@ namespace RaspisanieNARFU
                 Console.WriteLine("===========МЕНЮ ВЫБОРА===========" +
                     "\nВведите клавишу:" +
                     "\n1) Клавишу ESC, чтобы выйти," +
-                    "\n2) Клавишу A, чтобы получить расписание недели" +
-                    "\n3) Клавишу T, чтобы получить расписание на сегодня.");
+                    "\n2) Клавишу A, чтобы получить расписание недели," +
+                    "\n3) Клавишу T, чтобы получить расписание на сегодня," +
+                    "\n4) Клавишу N, чтобы получить насписание на завтра.");
                 key = Console.ReadKey();
                 Console.Clear();
                 var fgLeactures = LectureExtensions.lectures.FilterLectures(filters, group_filter);
@@ -39,10 +40,20 @@ namespace RaspisanieNARFU
                                              .GetGroupedLectureList()
                                              .GetLecturesString());
                 }
+                else if (key.Key == ConsoleKey.N)
+                {
+                    Console.WriteLine(fgLeactures.Where(x => DateTime.Parse(x.dayofweek).DayOfWeek == DateTime.Now.AddDays(1).DayOfWeek).ToList()
+                                             .GetGroupedLectureList()
+                                             .GetLecturesString());
+                }
+                else if (key.Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
                 Console.WriteLine("=======> Введите любую клавишу, чтобы вернуться в меню <=======");
                 Console.ReadKey();
                 Console.Clear();
-            } while (key.Key != ConsoleKey.Escape);
+            } while (true);
         }
     }
 }
