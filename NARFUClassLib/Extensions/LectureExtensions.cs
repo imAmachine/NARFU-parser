@@ -10,7 +10,7 @@ namespace NARFUClassLib.Extensions
     {
         public static List<Lecture> lectures = new();
 
-        private static List<Lecture> GetParsedList(string? page, string? week)
+        private static List<Lecture> GetParsedList(string? page, string week = "1")
         {
             if (page != null)
             {
