@@ -10,7 +10,11 @@ namespace RaspisanieNARFU
             { "Прикладная физическая культура и спорт", "Замараева М.П." },
             { "Русский язык как иностранный (факультатив)", string.Empty },
         };
-        private static readonly string group_filter = "151115_1";
+        private static readonly Dictionary<string, string> group_filter = new()
+        {
+            { "151115", "2" },
+        };
+        //private static readonly string group_filter = "151115_2";
         private static Dictionary<ConsoleKey, string> menu_keys = new()
         {
             { ConsoleKey.Escape, "выйти из программы" },
@@ -20,7 +24,7 @@ namespace RaspisanieNARFU
             { ConsoleKey.W, "выбрать неделю (1-6)" },
             { ConsoleKey.R, "заново загрузить список лекций с сайта"}
         };
-        private static string? week = "1";
+        private static string week = "1";
         private static void LoadAllLectures(string week) => LectureExtensions.lectures = LectureExtensions.GetLecturesList(new Uri(url), week)
                                                                                         .FilterLectures(filters, group_filter);
         private static void Show_Menu()
@@ -64,6 +68,7 @@ namespace RaspisanieNARFU
         }
         internal static void Main()
         {
+            Console.WriteLine("Загрузка и парсинг данных. Пожалуйста подожди...");
             LoadAllLectures(week);
             Console.Clear();
             do

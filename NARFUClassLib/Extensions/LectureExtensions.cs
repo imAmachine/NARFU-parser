@@ -77,19 +77,30 @@ namespace NARFUClassLib.Extensions
             return result;
         }
 
-        public static List<Lecture> FilterLectures(this List<Lecture> lectures, Dictionary<string, string> filters, string group)
+        public static List<Lecture> FilterLectures(this List<Lecture> lectures, Dictionary<string, string> filters, Dictionary<string, string> group)
         {
             return lectures.Where(lect =>
             {
-                if (lect.group.Contains(group))
-                    return false;
-                foreach (var filter in filters)
-                    if (lect.discipline.Contains(filter.Key))
+                if (lect.group != null)
+                    foreach (var filter in group)
                     {
-                        if (filter.Value == "" || filter.Value == null || filter.Value == string.Empty)
-                            return false;
-                        return lect.discipline.Contains(filter.Value);
+                        KeyValuePair<string, string> pair = filter;
+                        if (lect.group.Contains(pair.Key))
+                            if (lect.group.Contains("_") && !lect.group.Contains("_" + pair.Value))
+                                return false;
                     }
+                if (lect.discipline != null)
+                {
+                    foreach (var filter in filters)
+                    {
+                        if (lect.discipline.Contains(filter.Key))
+                        {
+                            if (filter.Value == "" || filter.Value == null || filter.Value == string.Empty)
+                                return false;
+                            return lect.discipline.Contains(filter.Value);
+                        }
+                    }
+                }
                 return true;
             }).ToList();
         }
