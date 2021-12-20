@@ -65,14 +65,22 @@ namespace NARFUClassLib.Extensions
             return lectures.OrderBy(x => DateTime.Parse(x.dayofweek)).GroupBy(x => x.dayofweek);
         }
 
-        public static string GetLecturesString(this IEnumerable<IGrouping<string?, Lecture>> lecturesList)
+        public static string GetLecturesString(this IEnumerable<IGrouping<string?, Lecture>> lecturesList, bool short_format)
         {
             string result = string.Empty;
             foreach (IGrouping<string, Lecture> pair in lecturesList)
             {
                 result += $"============={pair.Key}=============\n";
-                foreach (var lect in pair)
-                    result += $"[{lect.num} пара] - {lect.time}\n{lect.discipline}\n{lect.kindOfWork}\n{lect.auditorium}\n{lect.group}\n\n";
+                if (!short_format)
+                {
+                    foreach (var lect in pair)
+                        result += $"[{lect.num} пара] - {lect.time}\n{lect.discipline}\n{lect.kindOfWork}\n{lect.auditorium}\n{lect.group}\n\n";
+                }
+                else
+                {
+                    foreach (var lect in pair)
+                        result += $"[{lect.num} пара] {lect.time} - {lect.discipline} - {lect.auditorium}\n";
+                }
             }
             return result;
         }

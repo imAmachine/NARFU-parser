@@ -15,16 +15,18 @@ namespace RaspisanieNARFU
             { "151115", "2" },
         };
         //private static readonly string group_filter = "151115_2";
-        private static Dictionary<ConsoleKey, string> menu_keys = new()
+        private static readonly Dictionary<ConsoleKey, string> menu_keys = new()
         {
             { ConsoleKey.Escape, "выйти из программы" },
             { ConsoleKey.A, "вывести расписание недели" },
             { ConsoleKey.T, "вывести расписание на сегодня" },
             { ConsoleKey.N, "вывести расписание на завтра" },
             { ConsoleKey.W, "выбрать неделю (1-6)" },
+            { ConsoleKey.F, "выбрать формат вывода расписания"},
             { ConsoleKey.R, "заново загрузить список лекций с сайта"}
         };
         private static string week = "1";
+        private static bool short_format = false;
         private static void LoadAllLectures(string week) => LectureExtensions.lectures = LectureExtensions.GetLecturesList(new Uri(url), week)
                                                                                         .FilterLectures(filters, group_filter);
         private static void Show_Menu()
@@ -43,15 +45,19 @@ namespace RaspisanieNARFU
             switch (key.Key)
             {
                 case ConsoleKey.A:
-                    return LectureExtensions.lectures.GetGroupedLectureList().GetLecturesString();
+                    return LectureExtensions.lectures.GetGroupedLectureList().GetLecturesString(short_format);
+                case ConsoleKey.F:
+                    Console.Write("Короткий формат вывода расписания(true - да/false - нет): ");
+                    short_format = Console.ReadLine() == "true" ? true : false;
+                    return "Формат успешно установлен.";
                 case ConsoleKey.T:
                     return LectureExtensions.lectures.Where(x => DateTime.Parse(x.dayofweek).DayOfWeek == DateTime.Now.DayOfWeek).ToList()
                                          .GetGroupedLectureList()
-                                         .GetLecturesString();
+                                         .GetLecturesString(short_format);
                 case ConsoleKey.N:
                     return LectureExtensions.lectures.Where(x => DateTime.Parse(x.dayofweek).DayOfWeek == DateTime.Now.AddDays(1).DayOfWeek).ToList()
                                          .GetGroupedLectureList()
-                                         .GetLecturesString();
+                                         .GetLecturesString(short_format);
                 case ConsoleKey.W:
                     Console.Write("Введите номер недели (1-6): ");
                     week = Console.ReadLine();
