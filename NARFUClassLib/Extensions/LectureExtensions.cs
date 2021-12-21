@@ -10,7 +10,7 @@ namespace NARFUClassLib.Extensions
     {
         public static List<Lecture> lectures = new();
 
-        private static List<Lecture> GetParsedList(string? page, string week = "1")
+        private static List<Lecture>? GetParsedList(string? page, string week = "1")
         {
             if (page != null)
             {
@@ -18,37 +18,45 @@ namespace NARFUClassLib.Extensions
                 HtmlParser parser = new();
                 IDocument doc = parser.ParseDocument(page);
 
-                foreach (var headEl in doc.GetElementById($"week_{week}").QuerySelectorAll(".list"))
+                if (doc != null)
                 {
-                    string dayOfWeek = new Regex(@"\s+").Replace(headEl.QuerySelector(".dayofweek").TextContent.Trim(), " ");
-                    foreach (var time_table_sheet in headEl.QuerySelectorAll(".timetable_sheet"))
+                    foreach (IElement? headEl in doc.GetElementById($"week_{week}").QuerySelectorAll(".list"))
                     {
-                        var span_list = time_table_sheet.QuerySelectorAll("span");
-                        if (span_list.Length >= 5)
+                        string? dayOfWeek = new Regex(@"\s+").Replace(headEl.QuerySelector(".dayofweek").TextContent.Trim(), " ");
+                        foreach (var time_table_sheet in headEl.QuerySelectorAll(".timetable_sheet"))
                         {
-                            span_list = span_list.Where(item => item.ClassName != null).ToCollection();
-                            Dictionary<string, string> span_dict = new Dictionary<string, string>();
-                            foreach (var item in span_list)
+                            var span_list = time_table_sheet.QuerySelectorAll("span");
+                            if (span_list.Length >= 5)
                             {
-                                string key = item.ClassName;
-                                string val = new Regex(@"\s{2,}").Replace(item.TextContent.Trim(), " ");
-                                if (span_dict.ContainsKey(key))
-                                    span_dict[key] += "\n" + val;
+                                span_list = span_list.Where(item => item.ClassName != null).ToCollection();
+                                Dictionary<string, string> span_dict = new Dictionary<string, string>();
+                                foreach (var item in span_list)
+                                {
+                                    string? key = item.ClassName;
+                                    string? val = new Regex(@"\s{2,}").Replace(item.TextContent.Trim(), " ");
+                                    if (key != null && val != null)
+                                    {
+                                        if (span_dict.ContainsKey(key))
+                                            span_dict[key] += "\n" + val;
+                                        else
+                                            span_dict.Add(key, val);
+                                    }
+                                }
+                                Lecture lect;
+                                if (span_list.Length == 5)
+                                    lect = new Lecture(dayOfWeek, span_dict["num_para"], span_dict["time_para"], span_dict["kindOfWork"],
+                                                            span_dict["discipline"], "", span_dict["auditorium"]);
                                 else
-                                    span_dict.Add(key, val);
+                                    lect = new Lecture(dayOfWeek, span_dict["num_para"], span_dict["time_para"], span_dict["kindOfWork"],
+                                                            span_dict["discipline"], span_dict["group"], span_dict["auditorium"]);
+                                list.Add(lect);
                             }
-                            Lecture lect;
-                            if (span_list.Length == 5)
-                                lect = new Lecture(dayOfWeek, span_dict["num_para"], span_dict["time_para"], span_dict["kindOfWork"],
-                                                        span_dict["discipline"], "", span_dict["auditorium"]);
-                            else
-                                lect = new Lecture(dayOfWeek, span_dict["num_para"], span_dict["time_para"], span_dict["kindOfWork"],
-                                                        span_dict["discipline"], span_dict["group"], span_dict["auditorium"]);
-                            list.Add(lect);
                         }
                     }
+                    return list;
                 }
-                return list;
+                else
+                    return null;
             }
             else
                 return null;

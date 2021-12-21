@@ -47,8 +47,8 @@ namespace RaspisanieNARFU
                 case ConsoleKey.A:
                     return LectureExtensions.lectures.GetGroupedLectureList().GetLecturesString(short_format);
                 case ConsoleKey.F:
-                    Console.Write("Короткий формат вывода расписания(true - да/false - нет): ");
-                    short_format = Console.ReadLine() == "true" ? true : false;
+                    Console.Write("Короткий формат вывода расписания(y - да/n - нет): ");
+                    short_format = Console.ReadLine().ToLower() == "y";
                     return "Формат успешно установлен.";
                 case ConsoleKey.T:
                     return LectureExtensions.lectures.Where(x => DateTime.Parse(x.dayofweek).DayOfWeek == DateTime.Now.DayOfWeek).ToList()
