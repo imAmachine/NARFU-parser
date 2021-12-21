@@ -14,7 +14,6 @@ namespace RaspisanieNARFU
         {
             { "151115", "2" },
         };
-        //private static readonly string group_filter = "151115_2";
         private static readonly Dictionary<ConsoleKey, string> menu_keys = new()
         {
             { ConsoleKey.Escape, "выйти из программы" },
@@ -26,7 +25,7 @@ namespace RaspisanieNARFU
             { ConsoleKey.R, "заново загрузить список лекций с сайта"}
         };
         private static string week = "1";
-        private static bool short_format = false;
+        private static bool short_format = true;
         private static void LoadAllLectures(string week) => LectureExtensions.lectures = LectureExtensions.GetLecturesList(new Uri(url), week)
                                                                                         .FilterLectures(filters, group_filter);
         private static void Show_Menu()
@@ -71,6 +70,7 @@ namespace RaspisanieNARFU
                 default:
                     return "Такого пункта не существует.";
             }
+            GC.Collect();
         }
         internal static void Main()
         {

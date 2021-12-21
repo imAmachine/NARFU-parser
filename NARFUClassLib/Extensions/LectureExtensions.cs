@@ -76,6 +76,7 @@ namespace NARFUClassLib.Extensions
         public static string GetLecturesString(this IEnumerable<IGrouping<string?, Lecture>> lecturesList, bool short_format)
         {
             string result = string.Empty;
+            Console.WriteLine("Компактный режим отображения: " + short_format);
             foreach (IGrouping<string, Lecture> pair in lecturesList)
             {
                 result += $"============={pair.Key}=============\n";
