@@ -1,19 +1,13 @@
 ﻿using NARFUClassLib.Extensions;
+using NARFUClassLib.Structs;
+using NARFUClassLib.Tools;
 
 namespace RaspisanieNARFU
 {
     public class Program
     {
-        private const string url = @"https://ruz.narfu.ru/?timetable&group=15600";
-        private static readonly Dictionary<string, string> filters = new()
-        {
-            { "Прикладная физическая культура и спорт", "Замараева М.П." },
-            { "Русский язык как иностранный (факультатив)", string.Empty },
-        };
-        private static readonly Dictionary<string, string> group_filter = new()
-        {
-            { "151115", "2" },
-        };
+        private const string url = @"https://ruz.narfu.ru/?timetable&group=16626";
+
         private static readonly Dictionary<ConsoleKey, string> menu_keys = new()
         {
             { ConsoleKey.Escape, "выйти из программы" },
@@ -26,8 +20,11 @@ namespace RaspisanieNARFU
         };
         private static string week = "1";
         private static bool short_format = true;
-        private static void LoadAllLectures(string week) => LectureExtensions.lectures = LectureExtensions.GetLecturesList(new Uri(url), week)
-                                                                                        .FilterLectures(filters, group_filter);
+        private static void LoadAllLectures(string week)
+        {
+            Dictionary<string, Auditorium> filters = new Filters(Directory.GetCurrentDirectory() + @"\filters.xml").GetFilters();
+            LectureExtensions.lectures = LectureExtensions.GetLecturesList(new Uri(url), week).FilterLectures(filters);
+        }
         private static void Show_Menu()
         {
             Console.WriteLine("===========МЕНЮ ВЫБОРА===========");
@@ -70,7 +67,6 @@ namespace RaspisanieNARFU
                 default:
                     return "Такого пункта не существует.";
             }
-            GC.Collect();
         }
         internal static void Main()
         {
